@@ -2,6 +2,7 @@
   // see https://www.typescriptlang.org/tsconfig to better understand tsconfigs
   "include": ["src", "types"],
   "compilerOptions": {
+    "target": "es2018",
     "module": "esnext",
     "lib": ["dom", "es5"],
     "importHelpers": true,
@@ -31,5 +32,6 @@
     "forceConsistentCasingInFileNames": true,
     // `tsdx build` ignores this option, but it is commonly used when type-checking separately with `tsc`
     "noEmit": true,
+    "resolveJsonModule": true,
   }
 }

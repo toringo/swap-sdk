@@ -120,8 +120,9 @@ export const QUOTE_CONFIG = {
     JSON_RPC: '',
     PAIR_ABI: '',
     CUSTOM_BASES: {} as AddressToken ,
-    INIT_CODE_HASH: '',
-    FACTORY_ADDRESS: '',
+    INIT_CODE_HASH:
+      '0xf6608394468275c0df88a8568e9fbf7295a0aebddd5ae966ce6dbf5bb4ee68a0',
+    FACTORY_ADDRESS: '0xd654CbF99F2907F06c88399AE123606121247D5C',
     MAX_HOPS: 3,
     ADDITIONAL_BASES: {} as AddressToken,
     BASES_TO_CHECK_TRADES_AGAINST: [testnetTokens.wbnb, testnetTokens.cake, testnetTokens.busd],
@@ -132,8 +133,9 @@ export const QUOTE_CONFIG = {
     JSON_RPC: '',
     PAIR_ABI: '',
     CUSTOM_BASES: {} as AddressToken ,
-    INIT_CODE_HASH: '',
-    FACTORY_ADDRESS: '',
+    INIT_CODE_HASH:
+      '0xf6608394468275c0df88a8568e9fbf7295a0aebddd5ae966ce6dbf5bb4ee68a0',
+    FACTORY_ADDRESS: '0xd654CbF99F2907F06c88399AE123606121247D5C',
     MAX_HOPS: 3,
     ADDITIONAL_BASES: {} as AddressToken,
     BASES_TO_CHECK_TRADES_AGAINST: [

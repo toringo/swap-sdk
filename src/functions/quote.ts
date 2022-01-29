@@ -107,7 +107,7 @@ export class Quote {
 
     const allBasePairs = tokenA && tokenB ? [
       // the direct pair
-      [from, to],
+      [tokenA, tokenB],
       // token A against all bases
       ...bases.map((base): [Token, Token] => [tokenA, base]),
       // token B against all bases

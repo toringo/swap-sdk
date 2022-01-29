@@ -67,6 +67,7 @@ export class Quote {
     basePairs: [Token, Token][];
   } {
     // TODO chainId
+    debugger
     const chainId = this.chainId as number;
     const [tokenA, tokenB] = chainId
     ? [wrappedCurrency(from, chainId), wrappedCurrency(to, chainId)]
@@ -95,7 +96,9 @@ export class Quote {
    * @returns Pair[]
    */
   getAllCombinations(from?: Currency, to?: Currency): [Token, Token][] {
+    debugger
     const { bases, basePairs } = this.getBasePairs(from, to);
+    console.log('getAllCombinations', { bases, basePairs });
     const { CUSTOM_BASES } = this.config;
     // TODO chainId
     const chainId = this.chainId;
@@ -114,6 +117,7 @@ export class Quote {
       ...basePairs
     ] : [];
 
+    console.log('allBasePairs', allBasePairs);
     return allBasePairs
       .filter((tokens): tokens is [Token, Token] => Boolean(tokens[0] && tokens[1]))
       .filter(([t0, t1]) => t0 !== t1)
@@ -179,8 +183,10 @@ export class Quote {
    * @returns Pair[]
    */
   async getAllCommonPairs(from?: Currency, to?: Currency): Promise<Pair[]> {
+    debugger
     const allPairCombinations = this.getAllCombinations(from, to);
     const allPairs = await this.getPairs(allPairCombinations);
+    console.log('getAllCommonPairs', { allPairCombinations, allPairs });
 
     return Object.values(
       allPairs
@@ -198,7 +204,9 @@ export class Quote {
    * 根据 maxHops, allpairs, amountIn, currencyOut 等参数，调用最佳路径方法bestTradeExactIn/bestTradeExactOut
    */
   async getTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?: Currency): Promise<Trade | null> {
+    debugger
     const allowedPairs = await this.getAllCommonPairs(currencyAmountIn?.currency, currencyOut)
+    console.log('getTradeExactIn', allowedPairs);
     const singleHopOnly = false;
     const { BETTER_TRADE_LESS_HOPS_THRESHOLD, MAX_HOPS } = this.config;
 
@@ -230,7 +238,9 @@ export class Quote {
    * 根据 maxHops, allpairs, amountIn, currencyOut 等参数，调用最佳路径方法bestTradeExactIn/bestTradeExactOut
    */
   async getTradeExactOut(currencyIn?: Currency, currencyAmountOut?: CurrencyAmount): Promise<Trade | null> {
+    debugger
     const allowedPairs = await this.getAllCommonPairs(currencyIn, currencyAmountOut?.currency)
+    console.log('getTradeExactOut', allowedPairs);
     const singleHopOnly = false;
 
     const { BETTER_TRADE_LESS_HOPS_THRESHOLD, MAX_HOPS } = this.config;

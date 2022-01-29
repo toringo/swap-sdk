@@ -68,12 +68,11 @@ export class Quote {
   } {
     // TODO chainId
     debugger
-    const chainId = this.chainId as number;
-    const [tokenA, tokenB] = chainId
-    ? [wrappedCurrency(from, chainId), wrappedCurrency(to, chainId)]
+    const [tokenA, tokenB] = this.chainId
+    ? [wrappedCurrency(from, this.chainId), wrappedCurrency(to, this.chainId)]
     : [undefined, undefined]
 
-    if (!chainId) return {
+    if (!this.chainId) return {
       bases: [], basePairs: []
     };``
 
@@ -101,9 +100,9 @@ export class Quote {
     console.log('getAllCombinations', { bases, basePairs });
     const { CUSTOM_BASES } = this.config;
     // TODO chainId
-    const chainId = this.chainId;
-    const [tokenA, tokenB] = chainId
-    ? [wrappedCurrency(from, chainId), wrappedCurrency(to, chainId)]
+    // const chainId = this.chainId;
+    const [tokenA, tokenB] = this.chainId
+    ? [wrappedCurrency(from, this.chainId), wrappedCurrency(to, this.chainId)]
     : [undefined, undefined]
 
     const allBasePairs = tokenA && tokenB ? [
@@ -122,7 +121,7 @@ export class Quote {
       .filter((tokens): tokens is [Token, Token] => Boolean(tokens[0] && tokens[1]))
       .filter(([t0, t1]) => t0 !== t1)
       .filter(([tokenA_, tokenB_]) => {
-          if (!chainId) return true
+          if (!this.chainId) return true
 
           const customBasesA: Token[] | undefined = CUSTOM_BASES?.[tokenA_.address]
           const customBasesB: Token[] | undefined = CUSTOM_BASES?.[tokenB_.address]
@@ -142,11 +141,11 @@ export class Quote {
    */
   async getPairs(currencies: [Currency | undefined, Currency | undefined][]): Promise<[PairState, Pair | null][]> {
     // TODO chainId
-    const chainId = this.chainId;
+    // const chainId = this.chainId;
 
     const tokens = currencies.map(([currencyA, currencyB]) => [
-      wrappedCurrency(currencyA, chainId),
-      wrappedCurrency(currencyB, chainId),
+      wrappedCurrency(currencyA, this.chainId),
+      wrappedCurrency(currencyB, this.chainId),
     ]);
 
     const { FACTORY_ADDRESS, INIT_CODE_HASH } = this.config;

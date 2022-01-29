@@ -10,7 +10,7 @@ export type TranslatableText =
       }
     }
 export interface Address {
-  97?: string
+  66?: string
   56: string
 }
 

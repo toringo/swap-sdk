@@ -46,6 +46,7 @@ export async function multipleContractSingleData(
         ? contractInterface.encodeFunctionData(fragment, callInputs)
         : undefined;
 
+  console.log('multipleContractSingleData', {currentBlock, fragment, callData});
   const calls = fragment && addresses && addresses.length > 0 && callData
     ? addresses.map<Call | undefined>((address) => {
         return address && callData
@@ -57,7 +58,10 @@ export async function multipleContractSingleData(
       })
     : [];
 
+  console.log('multipleContractSingleData calls', {calls});
   const results = callsData(calls);
+
+  console.log('multipleContractSingleData results', {results});
 
   return results.map((result) => toCallState(result, contractInterface, fragment, currentBlock))
 }
@@ -85,12 +89,13 @@ export function callsData(calls: (Call | undefined)[]) {
   // TODO callResults
   const callResults: CallResults  = {};
   // TODO chainId
-  const chainId = 56;
+  const chainId = 66;
 
   return calls.map<CallResult>((call) => {
     if (!chainId || !call) return INVALID_RESULT
 
     const result = callResults[chainId]?.[toCallKey(call)]
+    console.log('callsData', { result, calls, call });
     let data
     if (result?.data && result?.data !== '0x') {
       // eslint-disable-next-line prefer-destructuring
@@ -110,6 +115,7 @@ export function toCallState(
   fragment: FunctionFragment | undefined,
   latestBlockNumber: number | undefined,
 ): CallState {
+  console.log('toCallState', {callResult, contractInterface, fragment, latestBlockNumber});
   if (!callResult) return INVALID_CALL_STATE
   const { valid, data, blockNumber } = callResult
   if (!valid) return INVALID_CALL_STATE
@@ -121,6 +127,7 @@ export function toCallState(
   if (success && data) {
     try {
       result = contractInterface.decodeFunctionResult(fragment, data)
+      console.log('toCallState result', {result});
     } catch (error) {
       console.debug('Result data parsing failed', fragment, data)
       return {

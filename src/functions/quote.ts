@@ -67,7 +67,6 @@ export class Quote {
     basePairs: [Token, Token][];
   } {
     // TODO chainId
-    debugger
     const [tokenA, tokenB] = this.chainId
     ? [wrappedCurrency(from, this.chainId), wrappedCurrency(to, this.chainId)]
     : [undefined, undefined]
@@ -95,7 +94,6 @@ export class Quote {
    * @returns Pair[]
    */
   getAllCombinations(from?: Currency, to?: Currency): [Token, Token][] {
-    debugger
     const { bases, basePairs } = this.getBasePairs(from, to);
     console.log('getAllCombinations', { bases, basePairs });
     const { CUSTOM_BASES } = this.config;
@@ -182,7 +180,6 @@ export class Quote {
    * @returns Pair[]
    */
   async getAllCommonPairs(from?: Currency, to?: Currency): Promise<Pair[]> {
-    debugger
     const allPairCombinations = this.getAllCombinations(from, to);
     const allPairs = await this.getPairs(allPairCombinations);
     console.log('getAllCommonPairs', { allPairCombinations, allPairs });

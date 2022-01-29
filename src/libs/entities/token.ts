@@ -44,6 +44,7 @@ export class Token extends Currency {
    * @throws if the tokens are on different chains
    */
   public sortsBefore(other: Token): boolean {
+    console.log('sortsBefore====>', this.chainId, other.chainId);
     invariant(this.chainId === other.chainId, 'CHAIN_IDS')
     invariant(this.address !== other.address, 'ADDRESSES')
     return this.address.toLowerCase() < other.address.toLowerCase()

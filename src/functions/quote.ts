@@ -5,7 +5,7 @@ import isTradeBetter from '../utils/trades';
 import { wrappedCurrency } from '../utils/wrappedCurrency';
 import { multipleContractSingleData } from '../utils/multicall';
 import { Currency, CurrencyAmount, Pair, Token, TokenAmount, Trade } from '../libs';
-import IUniswapV2PairABI from '../config/abi/uniswap-v2-pair.json'
+import IUniswapV2PairABI from '../config/abi/pair.json'
 // import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, BETTER_TRADE_LESS_HOPS_THRESHOLD, CUSTOM_BASES } from '../config/constants';
 
 export function add(a: number, b: number) {

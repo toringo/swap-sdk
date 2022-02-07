@@ -18,16 +18,15 @@ type ChainTokenList = {
 // used to construct intermediary pairs for trading
 export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
   [ChainId.MAINNET]: [
-    mainnetTokens.wbnb,
-    mainnetTokens.cake,
-    mainnetTokens.busd,
+    mainnetTokens.wokt,
+    mainnetTokens.okt,
+    mainnetTokens.okb,
     mainnetTokens.usdt,
-    mainnetTokens.btcb,
-    mainnetTokens.ust,
-    mainnetTokens.eth,
-    mainnetTokens.usdc,
+    mainnetTokens.btck,
+    mainnetTokens.ethk,
+    mainnetTokens.usdk,
   ],
-  [ChainId.TESTNET]: [testnetTokens.wbnb, testnetTokens.cake, testnetTokens.busd],
+  [ChainId.TESTNET]: [testnetTokens.wokt, testnetTokens.okt, testnetTokens.usdt],
 }
 
 /**
@@ -50,18 +49,18 @@ export const CUSTOM_BASES: { [chainId in ChainId]?: { [tokenAddress: string]: To
 // used for display in the default list when adding liquidity
 export const SUGGESTED_BASES: ChainTokenList = {
   [ChainId.MAINNET]: [mainnetTokens.busd, mainnetTokens.cake, mainnetTokens.btcb],
-  [ChainId.TESTNET]: [testnetTokens.wbnb, testnetTokens.cake, testnetTokens.busd],
+  [ChainId.TESTNET]: [testnetTokens.wokt, testnetTokens.cake, testnetTokens.busd],
 }
 
 // used to construct the list of all pairs we consider by default in the frontend
 export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
-  [ChainId.MAINNET]: [mainnetTokens.wbnb, mainnetTokens.dai, mainnetTokens.busd, mainnetTokens.usdt],
-  [ChainId.TESTNET]: [testnetTokens.wbnb, testnetTokens.cake, testnetTokens.busd],
+  [ChainId.MAINNET]: [mainnetTokens.wokt, mainnetTokens.dai, mainnetTokens.busd, mainnetTokens.usdt],
+  [ChainId.TESTNET]: [testnetTokens.wokt, testnetTokens.cake, testnetTokens.busd],
 }
 
 export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } = {
   [ChainId.MAINNET]: [
-    [mainnetTokens.cake, mainnetTokens.wbnb],
+    [mainnetTokens.cake, mainnetTokens.wokt],
     [mainnetTokens.busd, mainnetTokens.usdt],
     [mainnetTokens.dai, mainnetTokens.usdt],
   ],
@@ -138,16 +137,7 @@ export const QUOTE_CONFIG = {
     FACTORY_ADDRESS: '0x709102921812B3276A65092Fe79eDfc76c4D4AFe',
     MAX_HOPS: 3,
     ADDITIONAL_BASES: {} as AddressToken,
-    BASES_TO_CHECK_TRADES_AGAINST: [
-      // mainnetTokens.wbnb,
-      // mainnetTokens.cake,
-      // mainnetTokens.busd,
-      // mainnetTokens.usdt,
-      // mainnetTokens.btcb,
-      // mainnetTokens.ust,
-      // mainnetTokens.eth,
-      // mainnetTokens.usdc,
-    ],
+    BASES_TO_CHECK_TRADES_AGAINST: BASES_TO_CHECK_TRADES_AGAINST[ChainId.MAINNET],
     BETTER_TRADE_LESS_HOPS_THRESHOLD,
   },
 }

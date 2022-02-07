@@ -6,6 +6,7 @@ import { wrappedCurrency } from '../utils/wrappedCurrency';
 import { multipleContractSingleData } from '../utils/multicall';
 import { Currency, CurrencyAmount, Pair, Token, TokenAmount, Trade } from '../libs';
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
+import Web3 from 'web3';
 // import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, BETTER_TRADE_LESS_HOPS_THRESHOLD, CUSTOM_BASES } from '../config/constants';
 
 export function add(a: number, b: number) {
@@ -152,10 +153,18 @@ export class Quote {
       return tokenA && tokenB && !tokenA.equals(tokenB) ? Pair.getAddress(tokenA, tokenB, FACTORY_ADDRESS, INIT_CODE_HASH) : undefined
     });
 
-    const PAIR_INTERFACE = new Interface(IUniswapV2PairABI);
-    const results = await multipleContractSingleData(pairAddresses, PAIR_INTERFACE, 'getReserves');
+    const web3 = new Web3('https://exchainrpc.okex.org');
+    const pairContract = new web3.eth.Contract(IUniswapV2PairABI, pairAddresses);
+    const pairsReserveContractCall = await pairContract.methods
+      .getReserves()
+      .call();
 
-    return results.map((result, i) => {
+    console.log('pairsReserveContractCall', pairsReserveContractCall);
+
+    // const PAIR_INTERFACE = new Interface(IUniswapV2PairABI);
+    // const results = await multipleContractSingleData(pairAddresses, PAIR_INTERFACE, 'getReserves');
+
+    return [pairsReserveContractCall].map((result, i) => {
       const { result: reserves, loading } = result
       const tokenA = tokens[i][0]
       const tokenB = tokens[i][1]

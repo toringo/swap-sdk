@@ -11,16 +11,19 @@ interface TokenList {
 const defineTokens = <T extends TokenList>(t: T) => t
 
 export const mainnetTokens = defineTokens({
-  wbnb: new Token(
+  wokt: new Token(
     MAINNET,
-    '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+    '0x8f8526dbfd6e38e3d8307702ca8469bae6c56c15',
     18,
-    'WBNB',
-    'Wrapped BNB',
-    'https://www.binance.com/',
+    'WOKT',
+    'Wrapped OKT',
+    'https://www.okx.com/',
   ),
-  // bnb here points to the wbnb contract. Wherever the currency BNB is required, conditional checks for the symbol 'BNB' can be used
-  bnb: new Token(MAINNET, '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c', 18, 'BNB', 'BNB', 'https://www.binance.com/'),
+  okt: new Token(MAINNET, '0x8f8526dbfd6e38e3d8307702ca8469bae6c56c15', 18, 'OKT', 'OKT', 'https://www.okx.com/'),
+  okb: new Token(MAINNET, '0xdf54b6c6195ea4d948d03bfd818d365cf175cfc2', 18, 'OKB', 'OKB', 'https://www.okx.com/'),
+  btck: new Token(MAINNET, '0x54e4622dc504176b3bb432dccaf504569699a7ff', 18, 'BTCK', 'BTCK', 'https://www.okx.com/'),
+  ethk: new Token(MAINNET, '0xef71ca2ee68f45b9ad6f72fbdb33d707b872315c', 18, 'ETHK', 'ETHK', 'https://www.okx.com/'),
+  usdk: new Token(MAINNET, '0xdcac52e001f5bd413aa6ea83956438f29098166b', 18, 'USDK', 'USDK', 'https://www.okx.com/'),
   cake: new Token(
     MAINNET,
     '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82',
@@ -1953,6 +1956,28 @@ export const mainnetTokens = defineTokens({
 } as const)
 
 export const testnetTokens = defineTokens({
+  wokt: new Token(
+    MAINNET,
+    '0x8f8526dbfd6e38e3d8307702ca8469bae6c56c15',
+    18,
+    'WOKT',
+    'Wrapped OKT',
+    'https://www.okx.com/',
+  ),
+  // bnb here points to the wbnb contract. Wherever the currency BNB is required, conditional checks for the symbol 'BNB' can be used
+  okt: new Token(MAINNET, '0x8f8526dbfd6e38e3d8307702ca8469bae6c56c15', 18, 'OKT', 'OKT', 'https://www.okx.com/'),
+  okb: new Token(MAINNET, '0xdf54b6c6195ea4d948d03bfd818d365cf175cfc2', 18, 'OKB', 'OKB', 'https://www.okx.com/'),
+  btck: new Token(MAINNET, '0x54e4622dc504176b3bb432dccaf504569699a7ff', 18, 'BTCK', 'BTCK', 'https://www.okx.com/'),
+  ethk: new Token(MAINNET, '0xef71ca2ee68f45b9ad6f72fbdb33d707b872315c', 18, 'ETHK', 'ETHK', 'https://www.okx.com/'),
+  usdk: new Token(MAINNET, '0xdcac52e001f5bd413aa6ea83956438f29098166b', 18, 'USDK', 'USDK', 'https://www.okx.com/'),
+  usdt: new Token(
+    MAINNET,
+    '0x55d398326f99059fF775485246999027B3197955',
+    18,
+    'USDT',
+    'Tether USD',
+    'https://tether.to/',
+  ),
   wbnb: new Token(
     TESTNET,
     '0x094616F0BdFB0b526bD735Bf66Eca0Ad254ca81F',

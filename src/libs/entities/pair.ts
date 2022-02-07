@@ -36,7 +36,6 @@ export class Pair {
   public static getAddress(tokenA: Token, tokenB: Token, FACTORY_ADDRESS: string, INIT_CODE_HASH: string): string {
     const tokens = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA] // does safety checks
 
-    // TODO FACTORY_ADDRESS INIT_CODE_HASH 来源
     if (PAIR_ADDRESS_CACHE?.[tokens[0].address]?.[tokens[1].address] === undefined) {
       PAIR_ADDRESS_CACHE = {
         ...PAIR_ADDRESS_CACHE,
@@ -62,8 +61,8 @@ export class Pair {
       tokenAmounts[0].token.chainId,
       Pair.getAddress(tokenAmounts[0].token, tokenAmounts[1].token, FACTORY_ADDRESS, INIT_CODE_HASH),
       18,
-      'Cake-LP',
-      'Pancake LPs'
+      'Universe-LP',
+      'UniverseSwap LPs'
     )
     this.tokenAmounts = tokenAmounts as [TokenAmount, TokenAmount]
     this.FACTORY_ADDRESS = FACTORY_ADDRESS

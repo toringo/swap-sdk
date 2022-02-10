@@ -1,8 +1,8 @@
 import { BigNumber } from 'bignumber.js';
+import { Contract } from '@ethersproject/contracts';
 import { Interface, FunctionFragment } from '@ethersproject/abi';
 import { Call, toCallKey } from './actions';
 import { getBlockNumber } from './block';
-
 type MethodArg = string | number | BigNumber;
 type MethodArgs = Array<MethodArg | MethodArg[]>
 type OptionalMethodInputs = Array<MethodArg | MethodArg[] | undefined> | undefined
@@ -39,8 +39,10 @@ export async function multipleContractSingleData(
   methodName: string,
   callInputs?: OptionalMethodInputs,
 ): Promise<CallState[]> {
+  // debugger
   // TODO JSON RPC
-  const currentBlock = await getBlockNumber('https://exchainrpc.okex.org');
+  const currentBlock = await getBlockNumber();
+  console.log('currentBlock', currentBlock);
   const fragment = contractInterface.getFunction(methodName);
   const callData: string | undefined = fragment && isValidMethodArgs(callInputs)
         ? contractInterface.encodeFunctionData(fragment, callInputs)
@@ -58,10 +60,7 @@ export async function multipleContractSingleData(
       })
     : [];
 
-  console.log('multipleContractSingleData calls', {calls});
   const results = callsData(calls);
-
-  console.log('multipleContractSingleData results', {results});
 
   return results.map((result) => toCallState(result, contractInterface, fragment, currentBlock))
 }
@@ -86,6 +85,25 @@ const INVALID_RESULT: CallResult = { valid: false, blockNumber: undefined, data:
 
 
 export function callsData(calls: (Call | undefined)[]) {
+  // const RPC_URL = 'https://exchainrpc.okex.org';
+  // const simpleRpcProvider = new ethers.providers.JsonRpcProvider(RPC_URL);
+
+  // const signer = simpleRpcProvider.getSigner('0x81Fc6F6E44a2313743bCAA060681d24597aDbDfB')
+  // const multicallContract = new ethers.Contract('0x8C24A85DDB876e8D31e14125e40647761fE532Bf', multiCallAbi, signer);
+
+  // const multicallContract = new Contract('0x8C24A85DDB876e8D31e14125e40647761fE532Bf', multiCallAbi, simpleRpcProvider as any);
+  // signer.unlock('8a3b93c174cdb42bdf78db2931ec8b380cbaf8fc3e1fdbc9da3c5464c449bb8b');
+  // const callsFilter = calls.filter(item => item).map((call) => ({target: call?.address, callData: call?.callData}));
+  // console.log('multicallContract====>', {calls, currentBlock, multicallContract, signer, callsFilter});
+  // multicallContract.aggregate(
+  //   callsFilter,
+  //   // [{target: "0x05faf555522Fa3F93959F86B41A3808666093210", callData: "0x0902f1ac" }]
+  //   // { blockTag: currentBlock }
+  // ).then((res: any) => {
+  //   console.log('multicallContract====> then', res);
+  // }).catch((err: any) => {
+  //   console.log('multicallContract====> err', err);
+  // })
   // TODO callResults
   const callResults: CallResults  = {};
   // TODO chainId
@@ -95,7 +113,7 @@ export function callsData(calls: (Call | undefined)[]) {
     if (!chainId || !call) return INVALID_RESULT
 
     const result = callResults[chainId]?.[toCallKey(call)]
-    console.log('callsData', { result, calls, call });
+    // console.log('callsData', { result, calls, call });
     let data
     if (result?.data && result?.data !== '0x') {
       // eslint-disable-next-line prefer-destructuring
@@ -115,7 +133,6 @@ export function toCallState(
   fragment: FunctionFragment | undefined,
   latestBlockNumber: number | undefined,
 ): CallState {
-  console.log('toCallState', {callResult, contractInterface, fragment, latestBlockNumber});
   if (!callResult) return INVALID_CALL_STATE
   const { valid, data, blockNumber } = callResult
   if (!valid) return INVALID_CALL_STATE
@@ -127,7 +144,7 @@ export function toCallState(
   if (success && data) {
     try {
       result = contractInterface.decodeFunctionResult(fragment, data)
-      console.log('toCallState result', {result});
+      // console.log('toCallState result', {result});
     } catch (error) {
       console.debug('Result data parsing failed', fragment, data)
       return {
@@ -146,4 +163,31 @@ export function toCallState(
     result,
     error: !success,
   }
+}
+
+export interface ListenerOptions {
+  // how often this data should be fetched, by default 1
+  readonly blocksPerFetch?: number
+}
+export async function singleCallResult(
+  contract: Contract | null | undefined,
+  methodName: string,
+  inputs?: OptionalMethodInputs,
+  // options?: ListenerOptions,
+): Promise<CallState> {
+  const fragment = contract?.interface?.getFunction(methodName);
+
+  const calls = contract && fragment && isValidMethodArgs(inputs)
+    ? [
+        {
+          address: contract.address,
+          callData: contract.interface.encodeFunctionData(fragment, inputs),
+        },
+      ]
+    : []
+
+  const currentBlock = await getBlockNumber();
+  const result = callsData(calls)[0]
+
+  return toCallState(result, contract?.interface, fragment, currentBlock);
 }

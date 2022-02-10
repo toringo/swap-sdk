@@ -1,21 +1,18 @@
+
+
 import { ChainId } from './config/constants';
-
-import { Interface } from '@ethersproject/abi';
-import Web3 from 'web3';
-
 import { Pair } from './entities/pair';
 import { Trade } from './entities/trade';
 import { CurrencyAmount } from './entities/fractions/currencyAmount';
 import { TokenAmount } from './entities/fractions/tokenAmount';
-import { abi as IUniswapV2PairABI } from './abis/IUniswapV2Pair.json'
-
 import { Token } from './entities/token';
 import { Currency } from './entities/currency';
 
+import { QUOTE_CONFIG } from './config';
 import isTradeBetter from './utils/trades';
 import { wrappedCurrency } from './utils/wrappedCurrency';
-import { multipleContractSingleData } from './utils/multicall';
-import { QUOTE_CONFIG } from './config';
+import { getReversesByContract } from './utils/contracts';
+import { getPairAddress } from './utils/addressHelp';
 
 
 export function add(a: number, b: number) {
@@ -35,12 +32,8 @@ interface QuotePrams {
   from: Token;
 }
 
-interface Result extends ReadonlyArray<any> {
-  readonly [key: string]: any
-}
-
 export class Quote{
-  chainId: ChainId | undefined;
+  chainId: ChainId  = 66;
   constructor(config: QuotePrams) {
     this.chainId = config.chainId;
   }
@@ -81,9 +74,7 @@ export class Quote{
    */
   getAllCombinations(from?: Currency, to?: Currency): [Token, Token][] {
     const { bases, basePairs } = this.getBasePairs(from, to);
-    // console.log('getAllCombinations', { bases, basePairs });
     const { CUSTOM_BASES } = QUOTE_CONFIG[this.chainId || ChainId.MAINNET];
-    // TODO chainId
     const [tokenA, tokenB] = this.chainId
     ? [wrappedCurrency(from, this.chainId), wrappedCurrency(to, this.chainId)]
     : [undefined, undefined]
@@ -99,7 +90,6 @@ export class Quote{
       ...basePairs
     ] : [];
 
-    // console.log('allBasePairs', allBasePairs);
     return allBasePairs
       .filter((tokens): tokens is [Token, Token] => Boolean(tokens[0] && tokens[1]))
       .filter(([t0, t1]) => t0 !== t1)
@@ -122,61 +112,62 @@ export class Quote{
    * 调用 IUniswapV2PairABI 合约的 getReserves 方法获取pair的balance等信息
    */
   async getPairs(currencies: [Currency | undefined, Currency | undefined][]): Promise<[PairState, Pair | null][]> {
-    // TODO chainId
-    // const chainId = this.chainId;
-
     const tokens = currencies.map(([currencyA, currencyB]) => [
       wrappedCurrency(currencyA, this.chainId),
       wrappedCurrency(currencyB, this.chainId),
     ]);
 
-    // const { FACTORY_ADDRESS, INIT_CODE_HASH } = QUOTE_CONFIG[this.chainId];
+    const { FACTORY_ADDRESS, INIT_CODE_HASH } = QUOTE_CONFIG[this.chainId];
 
     const pairAddresses = tokens.map(([tokenA, tokenB]) => {
-      // TODO PairAddress
-      return tokenA && tokenB && !tokenA.equals(tokenB) ? Pair.getAddress(tokenA, tokenB) : undefined
+      if(tokenA && tokenB && !tokenA.equals(tokenB)) {
+        const pairAddress = getPairAddress(tokenA, tokenB, FACTORY_ADDRESS, INIT_CODE_HASH);
+        // const pairGet = Pair.getAddress(tokenA, tokenB);
+        // console.log('pairAddress', pairAddress === pairGet, { pairAddress, pairGet });
+
+        return pairAddress;
+      }
+
+      return undefined;
     });
 
-    // const web3 = new Web3('https://exchainrpc.okex.org');
-    // const pairContract = new web3.eth.Contract(IUniswapV2PairABI, pairAddresses);
-    // const pairsReserveContractCall = await pairContract.methods
-    //   .getReserves()
-    //   .call();
-
-    // console.log('pairsReserveContractCall', pairsReserveContractCall);
-
-    const PAIR_INTERFACE = new Interface(IUniswapV2PairABI);
-    const results = await multipleContractSingleData(pairAddresses, PAIR_INTERFACE, 'getReserves');
     const { rpc } = QUOTE_CONFIG[this.chainId || ChainId.MAINNET];
-    const web3 = new Web3(rpc);
-    // const pairContract = new web3.eth.Contract(IUniswapV2PairABI as any, pairAddresses[0]);
+    const allResults = await getReversesByContract(pairAddresses, rpc);
+    // const allResultsWeb3 = await getReversesByWeb3(pairAddresses, rpc);
+    /**
+     * getReversesByContract
+     * executionPrice: "0.000129642"
+     * inputAmount: "10"
+     * minimumAmountOut: undefined
+     * outputAmount: "0.00129642"
+     * priceImpact: "0.499568"
+     * 
+     * getReversesByWeb3
+     * executionPrice: "0.000129642"
+     * inputAmount: "10"
+     * minimumAmountOut: undefined
+     * outputAmount: "0.00129642"
+     * priceImpact: "0.499568"
+     */
 
-    // const pairsReserveContractCall = await pairContract.methods
-    //   .getReserves()
-    //   .call();
-    const webResults: Result[] = await Promise.all(pairAddresses.map(async (pairAddress) => {
-      if(pairAddress) {
-        try {
-          const pairContract = new web3.eth.Contract(IUniswapV2PairABI as any, pairAddress);
-          const pairsReserveContractCall = await pairContract.methods.getReserves().call();
-          return pairsReserveContractCall; 
-        } catch (error) {
-          return null; 
-        }
-      }
-      return null;
-    }));
-    console.log('webResults===> ', { webResults, results });
+    console.log('multicallContract getReserves', {allResults, tokens});
 
-    return webResults.map((result, i) => {
+    /**
+     * 利用multicall合约批量查询IUniswapV2PairABI的getReserves方法
+     * @TODO 暂未调通
+     */
+    // const PAIR_INTERFACE = new Interface(IUniswapV2PairABI);
+    // const results = await multipleContractSingleData(pairAddresses, PAIR_INTERFACE, 'getReserves');
+
+    return allResults.map((reserves, i) => {
       // const { result: reserves, loading } = result
       const tokenA = tokens[i][0]
       const tokenB = tokens[i][1]
 
       // if (loading) return [PairState.LOADING, null]
       if (!tokenA || !tokenB || tokenA.equals(tokenB)) return [PairState.INVALID, null]
-      if (!result) return [PairState.NOT_EXISTS, null]
-      const { reserve0, reserve1 } = result
+      if (!reserves) return [PairState.NOT_EXISTS, null]
+      const { reserve0, reserve1 } = reserves
       const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]
       return [
         PairState.EXISTS,
@@ -195,7 +186,7 @@ export class Quote{
   async getAllCommonPairs(from?: Currency, to?: Currency): Promise<Pair[]> {
     const allPairCombinations = this.getAllCombinations(from, to);
     const allPairs = await this.getPairs(allPairCombinations);
-    // console.log('getAllCommonPairs', { allPairCombinations, allPairs });
+    console.log('getAllCommonPairs', { allPairCombinations, allPairs });
 
     return Object.values(
       allPairs
@@ -213,7 +204,7 @@ export class Quote{
    * 根据 maxHops, allpairs, amountIn, currencyOut 等参数，调用最佳路径方法bestTradeExactIn/bestTradeExactOut
    */
   async getTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?: Currency): Promise<Trade | null> {
-    debugger
+    // debugger
     const allowedPairs = await this.getAllCommonPairs(currencyAmountIn?.currency, currencyOut)
     console.log('getTradeExactIn', allowedPairs);
     const singleHopOnly = false;
@@ -248,7 +239,7 @@ export class Quote{
    * 根据 maxHops, allpairs, amountIn, currencyOut 等参数，调用最佳路径方法bestTradeExactIn/bestTradeExactOut
    */
   async getTradeExactOut(currencyIn?: Currency, currencyAmountOut?: CurrencyAmount): Promise<Trade | null> {
-    debugger
+    // debugger
     const allowedPairs = await this.getAllCommonPairs(currencyIn, currencyAmountOut?.currency)
     // console.log('getTradeExactOut', allowedPairs);
     const singleHopOnly = false;

@@ -111,8 +111,8 @@ export const QUOTE_CONFIG = {
     PAIR_ABI: '',
     CUSTOM_BASES: {} as AddressToken,
     INIT_CODE_HASH:
-      '0xf6608394468275c0df88a8568e9fbf7295a0aebddd5ae966ce6dbf5bb4ee68a0',
-    FACTORY_ADDRESS: '0xd654CbF99F2907F06c88399AE123606121247D5C',
+      '0xe3ae0327539fda6ee87492b9ce166b7419808c231acd1fe54dd3fbf7754704f5',
+    FACTORY_ADDRESS: '0x709102921812B3276A65092Fe79eDfc76c4D4AFe',
     MAX_HOPS: 3,
     ADDITIONAL_BASES: {} as AddressToken,
     BASES_TO_CHECK_TRADES_AGAINST: BASES_TO_CHECK_TRADES_AGAINST[ChainId.TESTNET],
@@ -132,5 +132,16 @@ export const QUOTE_CONFIG = {
     BASES_TO_CHECK_TRADES_AGAINST: BASES_TO_CHECK_TRADES_AGAINST[ChainId.MAINNET],
     BETTER_TRADE_LESS_HOPS_THRESHOLD,
     rpc: 'https://exchainrpc.okex.org',
+  },
+}
+
+export const CURRENT_RPC = 'https://exchainrpc.okex.org';
+export const CURRENT_CHAINID = 66;
+
+// multicall合约地址
+export const addresses = {
+  multiCall: {
+    65: '0x8C24A85DDB876e8D31e14125e40647761fE532Bf',
+    66: '0x8C24A85DDB876e8D31e14125e40647761fE532Bf',
   },
 }

@@ -1984,7 +1984,7 @@ type MainnetToken = keyof typeof mainnetTokens;
 type TestnetToken = keyof typeof testnetTokens;
 
 const tokens = () => {
-  const chainId = process.env.REACT_APP_CHAIN_ID || '66';
+  const chainId = '66';
 
   // If testnet - return list comprised of testnetTokens wherever they exist, and mainnetTokens where they don't
   if (parseInt(chainId, 10) === 65) {

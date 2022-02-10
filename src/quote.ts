@@ -14,11 +14,6 @@ import { wrappedCurrency } from './utils/wrappedCurrency';
 import { getReversesByContract } from './utils/contracts';
 import { getPairAddress } from './utils/addressHelp';
 
-
-export function add(a: number, b: number) {
-  return a + b;
-}
-
 export enum PairState {
   LOADING,
   NOT_EXISTS,
@@ -33,7 +28,7 @@ interface QuotePrams {
 }
 
 export class Quote{
-  chainId: ChainId  = 66;
+  chainId: ChainId  = 56;
   constructor(config: QuotePrams) {
     this.chainId = config.chainId;
   }
@@ -46,14 +41,13 @@ export class Quote{
     bases: Token[];
     basePairs: [Token, Token][];
   } {
-    // TODO chainId
     const [tokenA, tokenB] = this.chainId
     ? [wrappedCurrency(from, this.chainId), wrappedCurrency(to, this.chainId)]
     : [undefined, undefined]
 
     if (!this.chainId) return {
       bases: [], basePairs: []
-    };``
+    };
 
     const { BASES_TO_CHECK_TRADES_AGAINST, ADDITIONAL_BASES } = QUOTE_CONFIG[this.chainId];
 
@@ -208,9 +202,7 @@ export class Quote{
     const allowedPairs = await this.getAllCommonPairs(currencyAmountIn?.currency, currencyOut)
     console.log('getTradeExactIn', allowedPairs);
     const singleHopOnly = false;
-    // TODO
     const { BETTER_TRADE_LESS_HOPS_THRESHOLD, MAX_HOPS } = QUOTE_CONFIG[this.chainId || ChainId.MAINNET];
-
     if (currencyAmountIn && currencyOut && allowedPairs.length > 0) {
       if (singleHopOnly) {
         return (

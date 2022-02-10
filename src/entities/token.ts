@@ -81,5 +81,13 @@ export const WETH = {
     'WOKT',
     'Wrapped OKT',
     'https://www.okx.com'
+  ),
+  [ChainId.BNB]:  new Token(
+    ChainId.BNB,
+    '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+    18,
+    'WBNB',
+    'Wrapped BNB',
+    'https://www.binance.com/',
   )
 }

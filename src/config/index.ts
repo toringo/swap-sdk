@@ -31,12 +31,14 @@ export const CUSTOM_BASES: { [chainId in ChainId]?: { [tokenAddress: string]: To
 export const SUGGESTED_BASES: ChainTokenList = {
   [ChainId.MAINNET]: [mainnetTokens.usdk, mainnetTokens.okt, mainnetTokens.btcb],
   [ChainId.TESTNET]: [testnetTokens.wokt, testnetTokens.okt, testnetTokens.usdk],
+  [ChainId.BNB]: [testnetTokens.wokt, testnetTokens.okt, testnetTokens.usdk],
 }
 
 // used to construct the list of all pairs we consider by default in the frontend
 export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
   [ChainId.MAINNET]: [mainnetTokens.wokt, mainnetTokens.dai, mainnetTokens.usdk, mainnetTokens.usdt],
   [ChainId.TESTNET]: [testnetTokens.wokt, testnetTokens.okt, testnetTokens.usdk],
+  [ChainId.BNB]: [testnetTokens.wokt, testnetTokens.okt, testnetTokens.usdk],
 }
 
 export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } = {
@@ -101,13 +103,79 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
     mainnetTokens.usdk,
   ],
   [ChainId.TESTNET]: [testnetTokens.wokt, testnetTokens.okt, testnetTokens.usdt],
+  [ChainId.BNB]: [
+    new Token(
+      ChainId.BNB,
+      '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+      18,
+      'WBNB',
+      'Wrapped BNB',
+      'https://www.binance.com/',
+    ),
+    new Token(
+    ChainId.BNB,
+      '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82',
+      18,
+      'CAKE',
+      'PancakeSwap Token',
+      'https://pancakeswap.finance/',
+    ),
+    new Token(
+      ChainId.BNB,
+      '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
+      18,
+      'BUSD',
+      'Binance USD',
+      'https://www.paxos.com/busd/',
+    ),
+    new Token(
+      ChainId.BNB,
+      '0x55d398326f99059fF775485246999027B3197955',
+      18,
+      'USDT',
+      'Tether USD',
+      'https://tether.to/',
+    ),
+    new Token(
+      ChainId.BNB,
+      '0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c',
+      18,
+      'BTCB',
+      'Binance BTC',
+      'https://bitcoin.org/',
+    ),
+    new Token(
+      ChainId.BNB,
+      '0x23396cF899Ca06c4472205fC903bDB4de249D6fC',
+      18,
+      'UST',
+      'Wrapped UST Token',
+      'https://mirror.finance/',
+    ),
+    new Token(
+      ChainId.BNB,
+      '0x2170Ed0880ac9A755fd29B2688956BD959F933F8',
+      18,
+      'ETH',
+      'Binance-Peg Ethereum Token',
+      'https://ethereum.org/en/',
+    ),
+    new Token(
+      ChainId.BNB,
+      '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d',
+      18,
+      'USDC',
+      'Binance-Peg USD Coin',
+      'https://www.centre.io/usdc',
+    ),
+  ],
+
 }
 
 // ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, BETTER_TRADE_LESS_HOPS_THRESHOLD, CUSTOM_BASES
 export const QUOTE_CONFIG = {
   [ChainId.TESTNET]: {
     chainId: 65,
-    JSON_RPC: '',
     PAIR_ABI: '',
     CUSTOM_BASES: {} as AddressToken,
     INIT_CODE_HASH:
@@ -121,7 +189,6 @@ export const QUOTE_CONFIG = {
   },
   [ChainId.MAINNET]: {
     chainId: ChainId.MAINNET,
-    JSON_RPC: '',
     PAIR_ABI: '',
     CUSTOM_BASES: {} as AddressToken ,
     INIT_CODE_HASH:
@@ -132,6 +199,19 @@ export const QUOTE_CONFIG = {
     BASES_TO_CHECK_TRADES_AGAINST: BASES_TO_CHECK_TRADES_AGAINST[ChainId.MAINNET],
     BETTER_TRADE_LESS_HOPS_THRESHOLD,
     rpc: 'https://exchainrpc.okex.org',
+  },
+  [ChainId.BNB]: {
+    chainId: ChainId.BNB,
+    PAIR_ABI: '',
+    CUSTOM_BASES: {} as AddressToken ,
+    INIT_CODE_HASH:
+      '0x00fb7f630766e6a796048ea87d01acd3068e8ff67d078148a3fa3f4a84f69bd5',
+    FACTORY_ADDRESS: '0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73',
+    MAX_HOPS: 3,
+    ADDITIONAL_BASES: {} as AddressToken,
+    BASES_TO_CHECK_TRADES_AGAINST: BASES_TO_CHECK_TRADES_AGAINST[ChainId.BNB],
+    BETTER_TRADE_LESS_HOPS_THRESHOLD,
+    rpc: 'https://nodes.pancakeswap.com',
   },
 }
 

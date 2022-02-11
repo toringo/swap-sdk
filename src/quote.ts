@@ -128,21 +128,6 @@ export class Quote{
     const { rpc } = QUOTE_CONFIG[this.chainId || ChainId.MAINNET];
     const allResults = await getReversesByContract(pairAddresses, rpc);
     // const allResultsWeb3 = await getReversesByWeb3(pairAddresses, rpc);
-    /**
-     * getReversesByContract
-     * executionPrice: "0.000129642"
-     * inputAmount: "10"
-     * minimumAmountOut: undefined
-     * outputAmount: "0.00129642"
-     * priceImpact: "0.499568"
-     * 
-     * getReversesByWeb3
-     * executionPrice: "0.000129642"
-     * inputAmount: "10"
-     * minimumAmountOut: undefined
-     * outputAmount: "0.00129642"
-     * priceImpact: "0.499568"
-     */
 
     console.log('multicallContract getReserves', {allResults, tokens});
 

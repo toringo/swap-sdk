@@ -1,5 +1,3 @@
-import { Price } from './fractions/price'
-import { TokenAmount } from './fractions/tokenAmount'
 import invariant from 'tiny-invariant'
 import JSBI from 'jsbi'
 import { pack, keccak256 } from '@ethersproject/solidity'
@@ -13,15 +11,33 @@ import {
   ZERO,
   ONE,
   FIVE,
-  FEES_NUMERATOR,
-  FEES_DENOMINATOR,
   ChainId,
 } from '../config/constants'
-import { sqrt, parseBigintIsh } from '../utils'
-import { InsufficientReservesError, InsufficientInputAmountError } from '../errors'
+
 import { Token } from './token'
+import { Price } from './fractions/price'
+import { sqrt, parseBigintIsh } from '../utils'
+import { TokenAmount } from './fractions/tokenAmount'
+import { DEFAULT_FEE, QUOTE_CONFIG } from '../config';
+import { InsufficientReservesError, InsufficientInputAmountError } from '../errors'
+
 
 let PAIR_ADDRESS_CACHE: { [token0Address: string]: { [token1Address: string]: string } } = {}
+
+type FEE = Pick<(typeof QUOTE_CONFIG)[ChainId.MAINNET], "FEES_NUMERATOR" | "FEES_DENOMINATOR">;
+
+type FEE_CONFIG = {
+  [id in ChainId]: FEE;
+}
+
+const FEES = Object.keys(QUOTE_CONFIG).reduce((fees, fee: unknown) => {
+  fees[fee as ChainId] = {
+    FEES_NUMERATOR: QUOTE_CONFIG[fee as ChainId].FEES_NUMERATOR,
+    FEES_DENOMINATOR: QUOTE_CONFIG[fee as ChainId].FEES_DENOMINATOR,
+  };
+  
+  return fees;
+}, {} as FEE_CONFIG);
 
 export class Pair {
   public readonly liquidityToken: Token
@@ -125,6 +141,9 @@ export class Pair {
     if (JSBI.equal(this.reserve0.raw, ZERO) || JSBI.equal(this.reserve1.raw, ZERO)) {
       throw new InsufficientReservesError()
     }
+    // amountOut = amountIn * 998 * reserveOut / (reserveIn * 1000 + amountIn * 998)
+    const chainId = inputAmount.token.chainId;
+    const { FEES_NUMERATOR, FEES_DENOMINATOR } = FEES[chainId] || DEFAULT_FEE;
     const inputReserve = this.reserveOf(inputAmount.token)
     const outputReserve = this.reserveOf(inputAmount.token.equals(this.token0) ? this.token1 : this.token0)
     const inputAmountWithFee = JSBI.multiply(inputAmount.raw, FEES_NUMERATOR)
@@ -149,7 +168,9 @@ export class Pair {
     ) {
       throw new InsufficientReservesError()
     }
-
+    // inputAmount = (inputReserve * outputAmount) * 1000 / (outputReserve * outputAmount * 998)
+    const chainId = outputAmount.token.chainId;
+    const { FEES_NUMERATOR, FEES_DENOMINATOR } = FEES[chainId] || DEFAULT_FEE;
     const outputReserve = this.reserveOf(outputAmount.token)
     const inputReserve = this.reserveOf(outputAmount.token.equals(this.token0) ? this.token1 : this.token0)
     const numerator = JSBI.multiply(JSBI.multiply(inputReserve.raw, outputAmount.raw), FEES_DENOMINATOR)

@@ -1,6 +1,8 @@
 import JSBI from 'jsbi';
+import { ChainId } from './constants';
 import { mainnetTokens, testnetTokens } from "./tokens"
-import { Percent, Token, ChainId } from '..';
+import { Token } from './../entities/token';
+import { Percent } from './../entities/fractions/percent';
 
 
 export const ROUTER_ADDRESS = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
@@ -175,7 +177,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
 // ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, BETTER_TRADE_LESS_HOPS_THRESHOLD, CUSTOM_BASES
 export const QUOTE_CONFIG = {
   [ChainId.TESTNET]: {
-    chainId: 65,
+    chainId: ChainId.TESTNET,
     PAIR_ABI: '',
     CUSTOM_BASES: {} as AddressToken,
     INIT_CODE_HASH:
@@ -185,6 +187,8 @@ export const QUOTE_CONFIG = {
     ADDITIONAL_BASES: {} as AddressToken,
     BASES_TO_CHECK_TRADES_AGAINST: BASES_TO_CHECK_TRADES_AGAINST[ChainId.TESTNET],
     BETTER_TRADE_LESS_HOPS_THRESHOLD,
+    FEES_NUMERATOR: JSBI.BigInt(998),
+    FEES_DENOMINATOR: JSBI.BigInt(1000),
     rpc: 'https://exchainrpc.okex.org',
   },
   [ChainId.MAINNET]: {
@@ -198,6 +202,8 @@ export const QUOTE_CONFIG = {
     ADDITIONAL_BASES: {} as AddressToken,
     BASES_TO_CHECK_TRADES_AGAINST: BASES_TO_CHECK_TRADES_AGAINST[ChainId.MAINNET],
     BETTER_TRADE_LESS_HOPS_THRESHOLD,
+    FEES_NUMERATOR: JSBI.BigInt(998),
+    FEES_DENOMINATOR: JSBI.BigInt(1000),
     rpc: 'https://exchainrpc.okex.org',
   },
   [ChainId.BNB]: {
@@ -211,6 +217,8 @@ export const QUOTE_CONFIG = {
     ADDITIONAL_BASES: {} as AddressToken,
     BASES_TO_CHECK_TRADES_AGAINST: BASES_TO_CHECK_TRADES_AGAINST[ChainId.BNB],
     BETTER_TRADE_LESS_HOPS_THRESHOLD,
+    FEES_NUMERATOR: JSBI.BigInt(9975),
+    FEES_DENOMINATOR: JSBI.BigInt(10000),
     rpc: 'https://nodes.pancakeswap.com',
   },
 }
@@ -224,4 +232,10 @@ export const addresses = {
     65: '0x8C24A85DDB876e8D31e14125e40647761fE532Bf',
     66: '0x8C24A85DDB876e8D31e14125e40647761fE532Bf',
   },
+}
+
+
+export const DEFAULT_FEE = {
+  FEES_NUMERATOR: JSBI.BigInt(9975),
+  FEES_DENOMINATOR: JSBI.BigInt(10000),
 }

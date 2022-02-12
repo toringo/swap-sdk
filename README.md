@@ -26,11 +26,11 @@ yarn install
 yarn test
 ```
 
-### 使用说明
-
-#### Working
+### Working
 - [x] **基于 BSC 的 [PancakeSwap](https://pancakeswap.finance/swap)** 
 - [x] **基于 OEC 的 [CherrySwap](https://www.cherryswap.net/#/swap)** 
+
+### 使用说明
 
 #### 询价
 

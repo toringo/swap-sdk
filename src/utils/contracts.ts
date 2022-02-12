@@ -1,4 +1,3 @@
-import Web3 from 'web3';
 import { ethers } from 'ethers';
 import { abi as IUniswapV2PairABI } from '../abis/IUniswapV2Pair.json'
 
@@ -20,23 +19,23 @@ export async function getReversesByContract(pairAddresses: (string | undefined)[
   return allResults;
 }
 
-interface Result extends ReadonlyArray<any> {
-  readonly [key: string]: any
-}
-export async function getReversesByWeb3(pairAddresses: (string | undefined)[], RPC_URL: string) {
-  const webResults: Result[] = await Promise.all(pairAddresses.map(async (pairAddress) => {
-      if(pairAddress) {
-        try {
-          const web3 = new Web3(RPC_URL);
-          const pairContract = new web3.eth.Contract(IUniswapV2PairABI as any, pairAddress);
-          const pairsReserveContractCall = await pairContract.methods.getReserves().call();
-          return pairsReserveContractCall; 
-        } catch (error) {
-          return null; 
-        }
-      }
-      return null;
-    }));
+// interface Result extends ReadonlyArray<any> {
+//   readonly [key: string]: any
+// }
+// export async function getReversesByWeb3(pairAddresses: (string | undefined)[], RPC_URL: string) {
+//   const webResults: Result[] = await Promise.all(pairAddresses.map(async (pairAddress) => {
+//       if(pairAddress) {
+//         try {
+//           const web3 = new Web3(RPC_URL);
+//           const pairContract = new web3.eth.Contract(IUniswapV2PairABI as any, pairAddress);
+//           const pairsReserveContractCall = await pairContract.methods.getReserves().call();
+//           return pairsReserveContractCall; 
+//         } catch (error) {
+//           return null; 
+//         }
+//       }
+//       return null;
+//     }));
 
-  return webResults;
-}
+//   return webResults;
+// }

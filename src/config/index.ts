@@ -174,7 +174,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
 
 }
 
-// ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, BETTER_TRADE_LESS_HOPS_THRESHOLD, CUSTOM_BASES
+// 扩展定义不同chain配置来支持不同swap询价
 export const QUOTE_CONFIG = {
   [ChainId.TESTNET]: {
     chainId: ChainId.TESTNET,
@@ -190,6 +190,7 @@ export const QUOTE_CONFIG = {
     FEES_NUMERATOR: JSBI.BigInt(998),
     FEES_DENOMINATOR: JSBI.BigInt(1000),
     rpc: 'https://exchainrpc.okex.org',
+    multiCallAddress: '0x8C24A85DDB876e8D31e14125e40647761fE532Bf',
   },
   [ChainId.MAINNET]: {
     chainId: ChainId.MAINNET,
@@ -205,6 +206,7 @@ export const QUOTE_CONFIG = {
     FEES_NUMERATOR: JSBI.BigInt(998),
     FEES_DENOMINATOR: JSBI.BigInt(1000),
     rpc: 'https://exchainrpc.okex.org',
+    multiCallAddress: '0x8C24A85DDB876e8D31e14125e40647761fE532Bf',
   },
   [ChainId.BNB]: {
     chainId: ChainId.BNB,
@@ -220,6 +222,7 @@ export const QUOTE_CONFIG = {
     FEES_NUMERATOR: JSBI.BigInt(9975),
     FEES_DENOMINATOR: JSBI.BigInt(10000),
     rpc: 'https://nodes.pancakeswap.com',
+    multiCallAddress: '0xfF6FD90A470Aaa0c1B8A54681746b07AcdFedc9B',
   },
 }
 

@@ -1,3 +1,4 @@
+import { Interface } from '@ethersproject/abi';
 
 
 import { ChainId } from './config/constants';
@@ -11,8 +12,12 @@ import { Currency } from './entities/currency';
 import { QUOTE_CONFIG } from './config';
 import isTradeBetter from './utils/trades';
 import { wrappedCurrency } from './utils/wrappedCurrency';
-import { getReversesByContract } from './utils/contracts';
+// import { getReversesByContract } from './utils/contracts';
 import { getPairAddress } from './utils/addressHelp';
+import { multipleContractSingleData } from './utils/multicall';
+
+import { abi as IUniswapV2PairABI } from './abis/IUniswapV2Pair.json'
+
 
 export enum PairState {
   LOADING,
@@ -125,25 +130,30 @@ export class Quote{
       return undefined;
     });
 
-    const { rpc } = QUOTE_CONFIG[this.chainId || ChainId.MAINNET];
-    const allResults = await getReversesByContract(pairAddresses, rpc);
+    const { rpc, multiCallAddress } = QUOTE_CONFIG[this.chainId || ChainId.MAINNET];
+    // const allResults = await getReversesByContract(pairAddresses, rpc);
     // const allResultsWeb3 = await getReversesByWeb3(pairAddresses, rpc);
-
-    console.log('multicallContract getReserves', {allResults, tokens});
 
     /**
      * 利用multicall合约批量查询IUniswapV2PairABI的getReserves方法
-     * @TODO 暂未调通
      */
-    // const PAIR_INTERFACE = new Interface(IUniswapV2PairABI);
-    // const results = await multipleContractSingleData(pairAddresses, PAIR_INTERFACE, 'getReserves');
+    const PAIR_INTERFACE = new Interface(IUniswapV2PairABI);
+    const multiCallResults = await multipleContractSingleData(
+      pairAddresses, 
+      PAIR_INTERFACE, 
+      'getReserves', 
+      {
+        rpc,
+        multiCallAddress,
+      }
+    );
 
-    return allResults.map((reserves, i) => {
-      // const { result: reserves, loading } = result
+    return multiCallResults.map((result, i) => {
+      const { result: reserves, loading } = result;
       const tokenA = tokens[i][0]
       const tokenB = tokens[i][1]
 
-      // if (loading) return [PairState.LOADING, null]
+      if (loading) return [PairState.LOADING, null]
       if (!tokenA || !tokenB || tokenA.equals(tokenB)) return [PairState.INVALID, null]
       if (!reserves) return [PairState.NOT_EXISTS, null]
       const { reserve0, reserve1 } = reserves
@@ -165,7 +175,6 @@ export class Quote{
   async getAllCommonPairs(from?: Currency, to?: Currency): Promise<Pair[]> {
     const allPairCombinations = this.getAllCombinations(from, to);
     const allPairs = await this.getPairs(allPairCombinations);
-    console.log('getAllCommonPairs', { allPairCombinations, allPairs });
 
     return Object.values(
       allPairs
@@ -185,7 +194,7 @@ export class Quote{
   async getTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?: Currency): Promise<Trade | null> {
     // debugger
     const allowedPairs = await this.getAllCommonPairs(currencyAmountIn?.currency, currencyOut)
-    console.log('getTradeExactIn', allowedPairs);
+    // console.log('getTradeExactIn', allowedPairs);
     const singleHopOnly = false;
     const { BETTER_TRADE_LESS_HOPS_THRESHOLD, MAX_HOPS } = QUOTE_CONFIG[this.chainId || ChainId.MAINNET];
     if (currencyAmountIn && currencyOut && allowedPairs.length > 0) {
@@ -216,7 +225,6 @@ export class Quote{
    * 根据 maxHops, allpairs, amountIn, currencyOut 等参数，调用最佳路径方法bestTradeExactIn/bestTradeExactOut
    */
   async getTradeExactOut(currencyIn?: Currency, currencyAmountOut?: CurrencyAmount): Promise<Trade | null> {
-    // debugger
     const allowedPairs = await this.getAllCommonPairs(currencyIn, currencyAmountOut?.currency)
     // console.log('getTradeExactOut', allowedPairs);
     const singleHopOnly = false;

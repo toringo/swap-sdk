@@ -1,53 +1,88 @@
-# Pancakeswap SDK
+## UniverseSwap SDK
+##### 主要用于基于uniswap v2版本的询价交易。
 
 Forked from the [Uniswap SDK](https://github.com/Uniswap/uniswap-v2-sdk/commit/a88048e9c4198a5bdaea00883ca00c8c8e582605).
 
-You can refer to the Uniswap SDK documentation [uniswap.org](https://uniswap.org/docs/v2/SDK/getting-started/).
+Uniswap SDK 文档 [uniswap.org](https://uniswap.org/docs/v2/SDK/getting-started/).
 
-## Running tests
-
-To run the tests, follow these steps. You must have at least node v10 and [yarn](https://yarnpkg.com/) installed.
-
-First clone the repository:
+### 安装
+> node版本大于10，使用yarn。
 
 ```sh
-git clone https://github.com/pancakeswap/pancake-swap-sdk.git
+git clone https://github.com/toringo/swap-sdk.git
 ```
-
-Move into the pancakeswap-sdk working directory
 
 ```sh
-cd pancakeswap-sdk/
+cd swap-sdk/
 ```
-
-Install dependencies
 
 ```sh
 yarn install
 ```
 
-Run tests
+测试
 
 ```sh
 yarn test
 ```
 
-You should see output like the following:
+### 使用说明
 
-```sh
-yarn run v1.22.4
-$ tsdx test
- PASS  test/constants.test.ts
- PASS  test/pair.test.ts
- PASS  test/fraction.test.ts
- PASS  test/miscellaneous.test.ts
- PASS  test/entities.test.ts
- PASS  test/trade.test.ts
+#### Working
+- [x] **基于 BSC 的 [PancakeSwap](https://pancakeswap.finance/swap)** 
+- [x] **基于 OEC 的 [CherrySwap](https://www.cherryswap.net/#/swap)** 
 
-Test Suites: 1 skipped, 6 passed, 6 of 7 total
-Tests:       3 skipped, 82 passed, 85 total
-Snapshots:   0 total
-Time:        5.091s
-Ran all test suites.
-✨  Done in 6.61s.
+#### 询价
+
+输入 from token 数量询价 to token 用 `getTradeExactIn`，反之，输入 to token 数量询价 from token 用 `getTradeExactOut`。
+```js
+import { Quote, TokenAmount, Token } from 'universeswap-sdk';
+const quote = new Quote({
+  chainId: 66,
+});
+const USDT = new Token(
+  66,
+  '0x382bb369d343125bfb2117af9c149795c6c65c50',
+  18,
+  'USDT',
+  'USDT',
+  'https://www.okx.com/'
+)
+const UNIK = new Token(
+  66,
+  '0x59d226bb0a4d74274d4354ebb6a0e1a1aa5175b6',
+  18,
+  'UNIK',
+  'UNIK',
+  'https://www.okx.com/'
+)
+// 输入 from token 数量询价 to token
+quote.getTradeExactIn(
+  new TokenAmount(
+    UNIK,
+    String(1000000000000000000 * Number(cherryValue))
+  ),
+  USDT
+)
+.then(res => {
+  console.log(res);
+})
+
+// 输入 to token 数量询价 from token 
+quote.getTradeExactIn(
+  UNIK,
+  new TokenAmount(
+    USDT,
+    String(1000000000000000000 * Number(cherryValue))
+  )
+)
+.then(res => {
+  console.log(res);
+})
 ```
+
+#### 交易
+...
+
+### 扩展
+支持扩展不同链的基于uniswap v2版本的 XXXswap 询价，配置`src/config/index.ts` 下的 `QUOTE_CONFIG` 即可。

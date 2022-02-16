@@ -272,12 +272,14 @@ export class Trade {
     const tokenOut = wrappedCurrency(currencyOut, chainId)
     for (let i = 0; i < pairs.length; i++) {
       const pair = pairs[i]
-      // pair irrelevant
+      // 跳过和pair无关的pair
       if (!pair.token0.equals(amountIn.token) && !pair.token1.equals(amountIn.token)) continue
+      // 跳过pair输入或输出为0的情况
       if (pair.reserve0.equalTo(ZERO) || pair.reserve1.equalTo(ZERO)) continue
 
       let amountOut: TokenAmount
       try {
+        // 获取pair输出
         ;[amountOut] = pair.getOutputAmount(amountIn)
       } catch (error) {
         // input too low
@@ -286,7 +288,7 @@ export class Trade {
         }
         throw error
       }
-      // we have arrived at the output token, so this is the final trade of one of the paths
+      // pair的输出amountOut和tokenOut相等，所以这是其中一条路径的最终交易
       if (amountOut.token.equals(tokenOut)) {
         sortedInsert(
           bestTrades,
@@ -299,9 +301,10 @@ export class Trade {
           tradeComparator
         )
       } else if (maxHops > 1 && pairs.length > 1) {
+        // 排除当前pair
         const pairsExcludingThisPair = pairs.slice(0, i).concat(pairs.slice(i + 1, pairs.length))
 
-        // otherwise, consider all the other paths that lead from this token as long as we have not exceeded maxHops
+        // 没够maxHops，用上一个pair的 amountOut 作为输入，计算路径
         Trade.bestTradeExactIn(
           pairsExcludingThisPair,
           amountOut,

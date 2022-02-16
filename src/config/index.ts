@@ -3,6 +3,7 @@ import { ChainId } from './constants';
 import { mainnetTokens, testnetTokens } from "./tokens"
 import { Token } from './../entities/token';
 import { Percent } from './../entities/fractions/percent';
+import { WETH } from './WETH';
 
 
 export const ROUTER_ADDRESS = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
@@ -97,12 +98,12 @@ export const BETTER_TRADE_LESS_HOPS_THRESHOLD = new Percent(JSBI.BigInt(50), JSB
 export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
   [ChainId.MAINNET]: [
     mainnetTokens.wokt,
-    mainnetTokens.okt,
-    mainnetTokens.okb,
+    mainnetTokens.dai,
     mainnetTokens.usdt,
-    mainnetTokens.btck,
-    mainnetTokens.ethk,
-    mainnetTokens.usdk,
+    mainnetTokens.ust,
+    // mainnetTokens.btck,
+    // mainnetTokens.ethk,
+    // mainnetTokens.usdk,
   ],
   [ChainId.TESTNET]: [testnetTokens.wokt, testnetTokens.okt, testnetTokens.usdt],
   [ChainId.BNB]: [
@@ -195,7 +196,9 @@ export const QUOTE_CONFIG = {
   [ChainId.MAINNET]: {
     chainId: ChainId.MAINNET,
     PAIR_ABI: '',
-    CUSTOM_BASES: {} as AddressToken ,
+    CUSTOM_BASES: {
+      [mainnetTokens.eth.address]: [mainnetTokens.dai, WETH[ChainId.MAINNET], mainnetTokens.ethk]
+    } as AddressToken ,
     INIT_CODE_HASH:
       '0xe3ae0327539fda6ee87492b9ce166b7419808c231acd1fe54dd3fbf7754704f5',
     FACTORY_ADDRESS: '0x709102921812B3276A65092Fe79eDfc76c4D4AFe',

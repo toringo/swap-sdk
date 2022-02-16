@@ -49,6 +49,7 @@ export function sqrt(y: JSBI): JSBI {
 
 // given an array of items sorted by `comparator`, insert an item into its sort index and constrain the size to
 // `maxSize` by removing the last item
+// 给定一个按“比较器”排序的项目数组，将一个项目插入其排序索引并通过删除最后一个项目将大小限制为“maxSize”
 export function sortedInsert<T>(items: T[], add: T, maxSize: number, comparator: (a: T, b: T) => number): T | null {
   invariant(maxSize > 0, 'MAX_SIZE_ZERO')
   // this is an invariant because the interface cannot return multiple removed items if items.length exceeds maxSize

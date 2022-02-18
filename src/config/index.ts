@@ -39,7 +39,7 @@ export const SUGGESTED_BASES: ChainTokenList = {
 
 // used to construct the list of all pairs we consider by default in the frontend
 export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
-  [ChainId.MAINNET]: [mainnetTokens.wokt, mainnetTokens.dai, mainnetTokens.usdk, mainnetTokens.usdt],
+  [ChainId.MAINNET]: [mainnetTokens.wokt, mainnetTokens.daik, mainnetTokens.usdk, mainnetTokens.usdt],
   [ChainId.TESTNET]: [testnetTokens.wokt, testnetTokens.okt, testnetTokens.usdk],
   [ChainId.BNB]: [testnetTokens.wokt, testnetTokens.okt, testnetTokens.usdk],
 }
@@ -48,7 +48,7 @@ export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } 
   [ChainId.MAINNET]: [
     [mainnetTokens.okt, mainnetTokens.wokt],
     [mainnetTokens.usdk, mainnetTokens.usdt],
-    [mainnetTokens.dai, mainnetTokens.usdt],
+    [mainnetTokens.daik, mainnetTokens.usdt],
   ],
 }
 
@@ -98,7 +98,7 @@ export const BETTER_TRADE_LESS_HOPS_THRESHOLD = new Percent(JSBI.BigInt(50), JSB
 export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
   [ChainId.MAINNET]: [
     mainnetTokens.wokt,
-    mainnetTokens.dai,
+    mainnetTokens.daik,
     mainnetTokens.usdt,
     mainnetTokens.ust,
     // mainnetTokens.btck,
@@ -177,6 +177,24 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
 
 // 扩展定义不同chain配置来支持不同swap询价
 export const QUOTE_CONFIG = {
+  [ChainId.MAINNET]: {
+    chainId: ChainId.MAINNET,
+    PAIR_ABI: '',
+    CUSTOM_BASES: {
+      [mainnetTokens.eth.address]: [mainnetTokens.daik, WETH[ChainId.MAINNET], mainnetTokens.ethk]
+    } as AddressToken ,
+    INIT_CODE_HASH:
+      '0xe3ae0327539fda6ee87492b9ce166b7419808c231acd1fe54dd3fbf7754704f5',
+    FACTORY_ADDRESS: '0x709102921812B3276A65092Fe79eDfc76c4D4AFe',
+    MAX_HOPS: 3,
+    ADDITIONAL_BASES: {} as AddressToken,
+    BASES_TO_CHECK_TRADES_AGAINST: BASES_TO_CHECK_TRADES_AGAINST[ChainId.MAINNET],
+    BETTER_TRADE_LESS_HOPS_THRESHOLD,
+    FEES_NUMERATOR: JSBI.BigInt(998),
+    FEES_DENOMINATOR: JSBI.BigInt(1000),
+    rpc: 'https://exchainrpc.okex.org',
+    multiCallAddress: '0x8C24A85DDB876e8D31e14125e40647761fE532Bf',
+  },
   [ChainId.TESTNET]: {
     chainId: ChainId.TESTNET,
     PAIR_ABI: '',
@@ -187,24 +205,6 @@ export const QUOTE_CONFIG = {
     MAX_HOPS: 3,
     ADDITIONAL_BASES: {} as AddressToken,
     BASES_TO_CHECK_TRADES_AGAINST: BASES_TO_CHECK_TRADES_AGAINST[ChainId.TESTNET],
-    BETTER_TRADE_LESS_HOPS_THRESHOLD,
-    FEES_NUMERATOR: JSBI.BigInt(998),
-    FEES_DENOMINATOR: JSBI.BigInt(1000),
-    rpc: 'https://exchainrpc.okex.org',
-    multiCallAddress: '0x8C24A85DDB876e8D31e14125e40647761fE532Bf',
-  },
-  [ChainId.MAINNET]: {
-    chainId: ChainId.MAINNET,
-    PAIR_ABI: '',
-    CUSTOM_BASES: {
-      [mainnetTokens.eth.address]: [mainnetTokens.dai, WETH[ChainId.MAINNET], mainnetTokens.ethk]
-    } as AddressToken ,
-    INIT_CODE_HASH:
-      '0xe3ae0327539fda6ee87492b9ce166b7419808c231acd1fe54dd3fbf7754704f5',
-    FACTORY_ADDRESS: '0x709102921812B3276A65092Fe79eDfc76c4D4AFe',
-    MAX_HOPS: 3,
-    ADDITIONAL_BASES: {} as AddressToken,
-    BASES_TO_CHECK_TRADES_AGAINST: BASES_TO_CHECK_TRADES_AGAINST[ChainId.MAINNET],
     BETTER_TRADE_LESS_HOPS_THRESHOLD,
     FEES_NUMERATOR: JSBI.BigInt(998),
     FEES_DENOMINATOR: JSBI.BigInt(1000),

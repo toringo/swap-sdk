@@ -1,14 +1,14 @@
 {
-  "name": "universeswap-sdk",
+  "name": "@ok/universeswap-sdk",
   "license": "MIT",
   "version": "0.0.1",
-  "description": "🛠 An SDK for building applications on top of universeswap.",
+  "description": "An SDK for building applications on top of universeswap.",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist"
   ],
-  "repository": "https://github.com/toringo/swap-sdk.git",
+  "repository": "https://gitlab.okg.com/okexchain/universeswap-sdk",
   "keywords": [
     "universeswap",
     "oec"

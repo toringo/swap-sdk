@@ -13,7 +13,7 @@
     "universeswap",
     "oec"
   ],
-  "module": "dist/sdk.esm.js",
+  "module": "dist/universeswap-sdk.esm.js",
   "scripts": {
     "lint": "tsdx lint src test",
     "build": "tsdx build",

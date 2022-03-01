@@ -97,7 +97,6 @@ export async function multipleContractSingleData(
               result,
             })
           } catch (error) {
-            console.debug('Result data parsing failed', fragment, data)
             assemblyResults.push(INVALID_CALL_STATE)
           }
         } else {

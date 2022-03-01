@@ -17,9 +17,10 @@ export class Token extends Currency {
     decimals: number,
     symbol?: string,
     name?: string,
-    projectLink?: string
+    projectLink?: string,
+    isNative?: boolean
   ) {
-    super(decimals, symbol, name)
+    super(decimals, symbol, name, isNative)
     this.chainId = chainId
     this.address = validateAndParseAddress(address)
     this.projectLink = projectLink
